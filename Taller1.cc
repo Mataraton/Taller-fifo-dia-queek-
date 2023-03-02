@@ -1,58 +1,53 @@
 #include <iostream>
-#include <queue>
-#include <string>
+#include <stdlib.h>
 
 using namespace std;
 
-class Paciente {
-public:
-    Paciente(string nombre, string documento) {
-        this->nombre = nombre;
-        this->documento = documento;
-    }
-
-    string getNombre() {
-        return nombre;
-    }
-
-    string getDocumento() {
-        return documento;
-    }
-
-private:
+struct Paciente {
     string nombre;
-    string documento;
+    int numero_documento;
+    Paciente* siguiente; // apuntador al siguiente paciente en la lista
 };
 
 int main() {
-    queue<Paciente> pacientes; // Cola para almacenar los pacientes registrados
-    int n;
+    Paciente* inicio = NULL; // apuntador al inicio de la lista
 
-    cout << "Ingrese el numero de pacientes a registrar: ";
-    cin >> n;
-    cin.ignore(); // Para ignorar el salto de línea dejado por el cin
+    // bucle para ingresar pacientes
+    char continuar = 's';
+    while (continuar == 's') {
+        // crear un nuevo paciente
+        Paciente* nuevo_paciente = new Paciente;
 
-    // Bucle para solicitar el nombre y el documento del paciente
-    for (int i = 0; i < n; i++) {
-        string nombre, documento;
-        cout << "Ingrese el nombre del paciente " << i+1 << ": ";
-        getline(cin, nombre);
-        cout << "Ingrese el numero de documento del paciente " << i+1 << ": ";
-        getline(cin, documento);
+        // solicitar datos del paciente
+        cout << "Ingrese el nombre del paciente: ";
+        getline(cin, nuevo_paciente->nombre);
+        cout << "Ingrese el número de documento del paciente: ";
+        cin >> nuevo_paciente->numero_documento;
 
-        // Creamos un objeto Paciente con la información ingresada y lo agregamos a la cola de pacientes
-        Paciente paciente(nombre, documento);
-        pacientes.push(paciente);
+        // agregar el paciente a la lista
+        nuevo_paciente->siguiente = inicio;
+        inicio = nuevo_paciente;
+
+        // preguntar si desea ingresar otro paciente
+        cout << "¿Desea ingresar otro paciente? (s/n): ";
+        cin >> continuar;
+        cin.ignore(); // ignorar el salto de línea dejado por cin
     }
 
-    // Mostramos la lista de pacientes en orden de registro
-    cout << "Lista de pacientes registrados:" << endl;
-    int i = 1;
-    while (!pacientes.empty()) {
-        Paciente paciente = pacientes.front();
-        pacientes.pop();
-        cout << i << ". Nombre: " << paciente.getNombre() << ", Documento: " << paciente.getDocumento() << endl;
-        i++;
+    // mostrar lista de pacientes
+    cout << "Lista de pacientes:" << endl;
+    int num_paciente = 1;
+    for (Paciente* p = inicio; p != NULL; p = p->siguiente) {
+        cout << num_paciente << ". " << p->nombre << " (Documento: " << p->numero_documento << ")" << endl;
+        num_paciente++;
+    }
+
+    // liberar memoria de la lista
+    Paciente* p = inicio;
+    while (p != NULL) {
+        Paciente* temp = p;
+        p = p->siguiente;
+        delete temp;
     }
 
     return 0;
